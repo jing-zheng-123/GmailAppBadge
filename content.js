@@ -1,28 +1,24 @@
 function updateBadge() {
-  const title = document.title;
-  
-  // Look for a number inside parentheses in the title
-  const match = title.match(/\((\d+)\)/);
-  
-  if (match && navigator.setAppBadge) {
-    // If a number is found, push it to the macOS Dock
-    navigator.setAppBadge(parseInt(match[1], 10)).catch(console.error);
-  } else if (title.includes("Inbox") && navigator.clearAppBadge) {
-    // If you are in the Inbox and there's no number, clear the badge
+  // Gmail title format: "Inbox (1,234) - you@example.com - Gmail"
+  const head = document.title.split(" - ")[0];
+
+  // Only act on the inbox. For an open email, another label or a search,
+  // do nothing so the badge keeps showing the last inbox count.
+  const match = head.match(/^Inbox(?: \(([\d,]+)\))?$/);
+  if (!match) return;
+
+  const count = match[1] ? parseInt(match[1].replace(/,/g, ""), 10) : 0;
+
+  if (count > 0 && navigator.setAppBadge) {
+    navigator.setAppBadge(count).catch(console.error);
+  } else if (navigator.clearAppBadge) {
     navigator.clearAppBadge().catch(console.error);
   }
-  // Note: If you click into an email, the title changes to the subject. 
-  // By doing nothing here, the badge will helpfully stay on the screen 
-  // until you return to the inbox.
 }
 
 // Run immediately when Gmail loads
 updateBadge();
 
-// Set up an observer to watch for title changes in the background
+// Watch <head> rather than the <title> node itself, in case Gmail replaces it
 const observer = new MutationObserver(updateBadge);
-const titleNode = document.querySelector('title');
-
-if (titleNode) {
-  observer.observe(titleNode, { childList: true, characterData: true, subtree: true });
-}
+observer.observe(document.head, { childList: true, characterData: true, subtree: true });

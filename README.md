@@ -21,6 +21,5 @@ Then click the reload icon (↻) on the extension in `chrome://extensions` and r
 
 ## Known limitations
 
-- Clearing the badge only works when Gmail is in English (it looks for "Inbox" in the title).
-- Counts of 1,000 or more clear the badge instead of showing it.
-- Opening an email whose subject contains a number in parentheses, e.g. `Invoice (2)`, can set the badge to that number.
+- Only works when Gmail is in English (it looks for "Inbox" in the title).
+- The badge only updates while the Inbox is open. In other views (an open email, other labels, search) it keeps the last inbox count.
