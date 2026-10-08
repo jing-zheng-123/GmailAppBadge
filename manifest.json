@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Gmail Dock Badge",
+  "version": "0.1",
+  "description": "Native macOS Dock badge for Gmail PWA.",
+  "content_scripts": [
+    {
+      "matches": ["*://mail.google.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
